@@ -20,9 +20,9 @@ const productSchema = new mongoose.Schema(
       required: true,
       default: 'Sports',
     },
-    image: {
-      type: String,
-      required: false,
+    images: {
+      type: [String],
+      default: [],
     },
   },
   {

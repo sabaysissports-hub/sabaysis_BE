@@ -4,7 +4,9 @@ const fs = require('fs');
 
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const { category } = req.query;
+    const filter = category ? { category } : {};
+    const products = await Product.find(filter);
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -26,29 +28,41 @@ const getProductBySlug = async (req, res) => {
 
 const createOrUpdateProduct = async (req, res) => {
   const { slug, title, body, category } = req.body;
-  let imageUrl = null;
+  let imageUrls = [];
 
   try {
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'sabaysis/products',
-        resource_type: 'auto',
-      });
-      imageUrl = result.secure_url;
-      fs.unlinkSync(req.file.path);
+    // Handle multiple file uploads
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: 'sabaysis/products',
+          resource_type: 'auto',
+        });
+        imageUrls.push(result.secure_url);
+        fs.unlinkSync(file.path);
+      }
     }
 
     const productFields = {
       slug,
       title,
       body,
-      category: category || 'Sports', 
+      category: category || 'Sports',
     };
-    if (imageUrl) productFields.image = imageUrl;
+    
+    // Add images if uploaded
+    if (imageUrls.length > 0) {
+      productFields.images = imageUrls;
+    }
 
     let product = await Product.findOne({ slug });
 
     if (product) {
+      // If updating and new images are uploaded, append to existing images
+      if (imageUrls.length > 0) {
+        productFields.images = [...(product.images || []), ...imageUrls];
+      }
+      
       product = await Product.findOneAndUpdate(
         { slug },
         { $set: productFields },

@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const productRoutes = require('./routes/productRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const authRoutes = require('./routes/authRoutes');
 const Product = require('./models/productModel');
@@ -21,6 +22,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/products', productRoutes);
+app.use('/api/services', serviceRoutes);
 app.use('/api', emailRoutes); 
 app.use('/api/auth', authRoutes);
 

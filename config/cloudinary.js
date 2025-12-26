@@ -1,7 +1,9 @@
 const cloudinary = require('cloudinary').v2;
 const dotenv = require('dotenv');
+const path = require('path');
 
-dotenv.config();
+// Load .env from backend folder regardless of current working directory
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
