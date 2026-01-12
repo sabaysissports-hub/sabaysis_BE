@@ -6,6 +6,7 @@ const productRoutes = require('./routes/productRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const authRoutes = require('./routes/authRoutes');
+const testimonialRoutes = require('./routes/testimonialRoutes');
 const Product = require('./models/productModel');
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api', emailRoutes); 
 app.use('/api/auth', authRoutes);
+app.use('/api/testimonials', testimonialRoutes);
 
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
